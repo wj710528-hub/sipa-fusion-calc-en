@@ -1,6 +1,6 @@
 {
   "name": "Sipa Fusion Cascade Calculator",
-  "short_name": "Sipa Fusion",
+  "short_name": "Sipa Fusion Cascade Calculator",
   "description": "Projector planning, wall-dimension estimation, media canvas calculation, and blending cascade topology.",
   "start_url": "./index.html",
   "scope": "./",

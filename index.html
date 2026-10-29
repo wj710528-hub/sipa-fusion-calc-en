@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#c9272c">
+  <meta name="apple-mobile-web-app-title" content="Sipa Fusion Cascade">
+  <meta name="description" content="Sipa Fusion Cascade Calculator: estimate projector count, throw distance, blending topology, and media canvas requirements from application scenarios, wall dimensions, and throw ratio.">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>Sipa Fusion Cascade Calculator V3.2</title>
+  <style>
+    :root{--brand:#c9272c;--blue:#1769aa;--orange:#ef7b22;--bg:#f2f5f9;--card:#fff;--line:#dfe6ee;--text:#202b38;--muted:#667085;--soft:#f8fafc;--shadow:0 10px 28px rgba(22,34,51,.075)}
+    *{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif}button,input,select{font:inherit}button{touch-action:manipulation;cursor:pointer}
+    .wrap{max-width:1120px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom))}.shell{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+    .header{display:flex;align-items:center;gap:12px;padding:15px 17px;border-bottom:1px solid var(--line);background:linear-gradient(130deg,#fff,#fbfcfe)}.logo{width:104px;height:39px;object-fit:contain;border-radius:0;background:transparent;flex-shrink:0}.brand-copy{flex:1;min-width:0}.brand-copy h1{font-size:20px;line-height:1.2;margin:0;font-weight:900;letter-spacing:.1px}.brand-copy p{margin:5px 0 0;font-size:12px;line-height:1.4;color:var(--muted)}.version{padding:6px 10px;background:#fff0f0;color:var(--brand);border:1px solid #ffd4d4;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:13px;padding:13px}.panel{min-width:0;border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}.section-head{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:15px;font-weight:900}.step{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:8px;background:#fff0f0;color:var(--brand);font-size:11px;font-weight:950}.section-title{font-size:12px;color:#344054;font-weight:850;margin:14px 0 8px}.section-title:first-of-type{margin-top:0}
+    .mode-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:12px}.mode-tab{min-height:43px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#344054;font-size:11px;line-height:1.35;font-weight:850;padding:7px 5px}.mode-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 5px 13px rgba(23,105,170,.16)}
+    .scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.scene-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;gap:4px;min-height:68px;border:1px solid var(--line);border-radius:11px;padding:10px;background:#fff;color:#273647}.scene-card b{font-size:12px;font-weight:900}.scene-card small{font-size:10px;color:var(--muted);line-height:1.35}.scene-card.active{border-color:var(--blue);background:#edf6fc;box-shadow:inset 0 0 0 1px var(--blue)}.scene-card.active small{color:#38698d}
+    .hint{font-size:11px;line-height:1.55;color:#697586;background:#f8fafc;border-left:3px solid #b9c8d6;padding:8px 10px;border-radius:0 8px 8px 0;margin-top:9px}.surface-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.surface-card{border:1px solid var(--line);border-radius:11px;padding:9px;background:#fff;min-width:0}.surface-card.active{border-color:#b6d7ed;background:#f5fbff}.surface-head{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:8px}.surface-head b{font-size:12px}.surface-state{font-size:9px;border-radius:999px;padding:3px 6px;color:#667085;background:#f0f2f5;white-space:nowrap}.surface-card.active .surface-state{color:#12609b;background:#dceefa}.counter{display:flex;align-items:center;gap:6px}.counter button{width:31px;height:32px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#344054;font-weight:900;font-size:17px;line-height:1}.counter button:active{transform:scale(.97)}.counter output,.counter input{flex:1;min-width:0;text-align:center;font-weight:900;font-size:15px;border:1px solid var(--line);border-radius:8px;height:32px;background:#fff;color:#1d3348;padding:4px}.counter input{width:50px}.counter button:disabled{opacity:.35;cursor:not-allowed}.resolution-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.res-choice{min-height:53px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#344054;font-size:13px;font-weight:900;padding:8px}.res-choice small{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-top:3px}.res-choice.active{background:#edf6fc;border-color:var(--blue);color:#125f98;box-shadow:inset 0 0 0 1px var(--blue)}.res-choice.active small{color:#38698d}
+    .channel-entry{border:1px solid var(--line);border-radius:12px;background:#fbfcfe;padding:12px}.channel-entry label{display:block;font-size:12px;font-weight:850;color:#344054;margin-bottom:8px}.channel-entry .counter button{width:42px;height:43px;font-size:21px}.channel-entry .counter input{height:43px;font-size:18px}.field-help{font-size:11px;line-height:1.5;color:var(--muted);margin-top:8px}.actions{display:flex;gap:8px;margin-top:14px}.btn{border:0;border-radius:11px;min-height:45px;padding:10px 13px;font-size:12px;font-weight:900}.btn-primary{flex:1;background:linear-gradient(135deg,#ef852e,#de650c);color:#fff;box-shadow:0 6px 14px rgba(222,101,12,.16)}.btn-secondary{background:#f1f4f7;color:#465465;border:1px solid var(--line)}
+    .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpi{border:1px solid #d8e7f1;background:#f0f7fc;border-radius:12px;padding:11px;min-width:0}.kpi.highlight{grid-column:1/-1;background:#eef8f2;border-color:#cfe8d9}.kpi label{display:block;font-size:10px;color:#536577;font-weight:850}.kpi strong{display:block;font-size:25px;line-height:1.2;margin:5px 0 3px;color:#135e95;font-weight:950;overflow-wrap:anywhere}.kpi.highlight strong{font-size:26px;color:#14613c}.kpi small{display:block;font-size:10px;line-height:1.4;color:#637181}.result-block{margin-top:13px}.block-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:900;margin:0 0 8px}.pill{font-size:10px;color:#1769aa;background:#edf6fc;border-radius:999px;padding:4px 7px;font-weight:850;white-space:nowrap}
+    .room-diagram{position:relative;min-height:214px;border:1px solid #dbe4ec;border-radius:13px;background:linear-gradient(145deg,#f7fafc,#eaf0f5);padding:15px;overflow:hidden}.room-inner{position:relative;max-width:360px;height:182px;margin:0 auto}.wall{position:absolute;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;border:1px dashed #aebdca;background:rgba(255,255,255,.8);color:#788593;border-radius:7px;text-align:center;padding:4px;font-size:10px;font-weight:850}.wall b{font-size:10px}.wall.active{background:#e4f2fc;border:1px solid #80b8df;color:#125e95;box-shadow:0 2px 5px rgba(23,105,170,.07)}.wall.back{left:22%;right:22%;top:0;height:34px}.wall.front{left:22%;right:22%;bottom:0;height:34px}.wall.left{left:0;top:22%;bottom:22%;width:18%}.wall.right{right:0;top:22%;bottom:22%;width:18%}.room-center{position:absolute;left:21%;right:21%;top:25%;bottom:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#697989;font-size:11px;line-height:1.5}.floor-tag,.ceiling-tag{position:absolute;left:50%;transform:translateX(-50%);border-radius:999px;padding:4px 9px;font-size:10px;font-weight:850;white-space:nowrap;background:#fff;border:1px solid #d5dfe8;color:#7b8794}.floor-tag{top:39%}.ceiling-tag{top:60%}.floor-tag.active,.ceiling-tag.active{background:#fff0d9;border-color:#f3c17f;color:#8a4c08}.diagram-note{font-size:10px;color:#7a8795;margin-top:6px;line-height:1.45}
+    .channel-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.channel-item{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0;background:#fff}.ch-badge{flex-shrink:0;display:flex;align-items:center;justify-content:center;min-width:37px;height:31px;border-radius:8px;background:#edf6fc;color:#12609b;font-size:10px;font-weight:950}.channel-copy{min-width:0}.channel-copy b{display:block;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.channel-copy small{display:block;font-size:10px;color:var(--muted);margin-top:2px}.cascade-list{display:grid;gap:8px}.cascade-unit{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}.cascade-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;background:#f7f9fb;border-bottom:1px solid var(--line)}.cascade-head b{font-size:12px}.cascade-head span{font-size:10px;font-weight:850;color:#1769aa;background:#eaf4fb;border-radius:999px;padding:4px 7px}.cascade-outputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:8px}.cascade-output{border:1px solid #e6edf3;border-radius:8px;padding:7px;font-size:10px;line-height:1.45;min-width:0}.cascade-output strong{display:block;color:#1769aa;font-size:10px}.cascade-output span{display:block;color:#465465;overflow-wrap:anywhere}.empty-state{border:1px dashed #cbd5df;border-radius:11px;padding:18px;text-align:center;color:#7b8794;font-size:12px;line-height:1.6;background:#fafbfd}.copy-status{font-size:11px;color:#1769aa;font-weight:800;align-self:center}.plan-actions{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}.plan-actions .btn{min-height:40px}.plan-text{font-size:11px;line-height:1.65;white-space:pre-line;color:#344054;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:9px}
+    details.engineering{margin-top:13px;border:1px solid var(--line);border-radius:11px;overflow:hidden}details.engineering summary{cursor:pointer;list-style:none;padding:11px 12px;background:#f8fafc;font-size:12px;font-weight:900}details.engineering summary::-webkit-details-marker{display:none}details.engineering summary:after{content:'＋';float:right;color:#1769aa;font-weight:900}details.engineering[open] summary:after{content:'－'}.engineering-body{padding:11px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label{display:block;font-size:11px;font-weight:800;color:#536171;margin-bottom:5px}.field input,.field select{width:100%;min-height:39px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#273647}.canvas-result{margin-top:9px;padding:10px;border-radius:9px;background:#edf6fc;border:1px solid #d2e6f4;color:#145d91;font-size:13px;font-weight:900;line-height:1.55}.canvas-note{margin-top:7px;font-size:10px;line-height:1.5;color:#7a8795}.notice{margin-top:12px;padding:10px 11px;border:1px solid #f0dfbc;border-radius:10px;background:#fff9ed;color:#66512c;font-size:10.5px;line-height:1.6}.footer{text-align:center;padding:0 14px 15px;font-size:10px;color:#7c8794}
+    .demand-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.demand-fields .field input,.demand-fields .field select{min-height:40px}.demand-intro{font-size:11px;line-height:1.55;color:#5c6a79;background:#f4f8fb;border:1px solid #e0e9f0;border-radius:10px;padding:10px;margin-bottom:11px}.demand-results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.orientation-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;min-width:0}.orientation-card.recommended{border-color:#7ab6dc;box-shadow:inset 0 0 0 1px #7ab6dc}.orientation-head{padding:10px 11px;background:#f7f9fb;border-bottom:1px solid var(--line)}.orientation-card.recommended .orientation-head{background:#edf7fd}.orientation-head b{font-size:13px}.orientation-head small{display:block;font-size:10px;color:var(--muted);line-height:1.4;margin-top:4px}.orientation-body{padding:10px}.orientation-main{font-size:22px;font-weight:950;color:#1769aa;line-height:1.2;margin-bottom:4px}.orientation-sub{font-size:11px;line-height:1.5;color:#475668}.orientation-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}.mini-stat{border:1px solid #e6edf3;border-radius:8px;padding:7px;min-width:0}.mini-stat span{display:block;font-size:9px;color:#667085;line-height:1.35}.mini-stat b{display:block;font-size:11px;line-height:1.4;color:#24394c;margin-top:3px;overflow-wrap:anywhere}.demand-summary{border:1px solid #d9e7f1;background:#f4f9fc;border-radius:10px;padding:10px;font-size:11px;line-height:1.6;color:#34495c}.wall-breakdown{display:grid;gap:7px}.wall-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:11px}.wall-row b{color:#1769aa;white-space:nowrap}.demand-note{font-size:10.5px;line-height:1.6;color:#66512c;background:#fff9ed;border:1px solid #f0dfbc;border-radius:10px;padding:10px;margin-top:10px}.media-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.media-kpi{border:1px solid #d8e7f1;background:#f0f7fc;border-radius:11px;padding:10px;min-width:0}.media-kpi.highlight{background:#eef8f2;border-color:#cfe8d9}.media-kpi label{display:block;font-size:10px;color:#536577;font-weight:850}.media-kpi strong{display:block;font-size:20px;line-height:1.3;margin-top:5px;color:#135e95;overflow-wrap:anywhere}.media-kpi.highlight strong{color:#14613c}.media-kpi small{display:block;font-size:10px;line-height:1.45;color:#637181;margin-top:3px}.media-wall-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}.media-wall{border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff;font-size:11px;line-height:1.45}.media-wall b{display:block;color:#1769aa;margin-bottom:3px}.media-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.media-option{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff;min-width:0}.media-option-head{padding:9px 10px;background:#f7f9fb;border-bottom:1px solid var(--line);font-size:12px;font-weight:900}.media-option-body{padding:10px}.media-option strong{display:block;font-size:18px;color:#1769aa;overflow-wrap:anywhere}.media-option p{margin:5px 0 0;font-size:10px;line-height:1.55;color:#667085}.media-note{font-size:10.5px;line-height:1.6;color:#66512c;background:#fff9ed;border:1px solid #f0dfbc;border-radius:10px;padding:10px;margin-top:10px}
+    .media-rule-list{margin:0;padding-left:18px;font-size:11px;line-height:1.65;color:#344054}.media-rule-list li{margin:0 0 7px}.media-rule-list li:last-child{margin-bottom:0}.media-spec-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}.media-spec-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;min-width:0}.media-spec-card h4{font-size:11px;margin:0;padding:9px 10px;background:#f7f9fb;border-bottom:1px solid var(--line)}.media-spec-card p{font-size:10.5px;line-height:1.55;color:#536171;margin:0;padding:9px 10px}.media-spec-card b{color:#1769aa}.media-rule-foot{font-size:10.5px;line-height:1.6;color:#66512c;background:#fff9ed;border:1px solid #f0dfbc;border-radius:9px;padding:9px 10px;margin-top:9px}
+    .hidden{display:none!important}
+    @media(max-width:850px){.layout{grid-template-columns:1fr}.result-panel{order:2}.input-panel{order:1}}
+    @media(max-width:480px){.mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.media-pair{grid-template-columns:1fr}.demand-fields{grid-template-columns:1fr 1fr}.demand-results-grid{grid-template-columns:1fr}.wrap{padding-left:7px;padding-right:7px}.header{padding:12px;gap:9px}.logo{width:72px;height:27px}.brand-copy h1{font-size:17px}.brand-copy p{font-size:10px}.version{font-size:10px;padding:5px 7px}.layout{padding:8px;gap:9px}.panel{padding:10px}.scene-grid{gap:6px}.scene-card{min-height:64px;padding:8px}.scene-card b{font-size:11px}.surface-grid{gap:6px}.surface-card{padding:8px}.kpi strong{font-size:23px}.kpi.highlight strong{font-size:24px}.channel-list{grid-template-columns:1fr}.room-diagram{min-height:205px;padding:10px}.room-inner{height:180px}.fields{grid-template-columns:1fr 1fr}.plan-actions{align-items:stretch}.plan-actions .btn{flex:1}.copy-status{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="shell">
+      <header class="header">
+        <img class="logo" src="./header-logo.png" alt="Sipa">
+        <div class="brand-copy"><h1>Sipa Fusion Cascade Calculator</h1><p>Application Scenarios · Wall-Dimension Planning · Media Resolution · Cascade Topology</p></div>
+        <span class="version">V3.2</span>
+      </header>
+      <div class="layout">
+        <section class="panel input-panel">
+          <h2 class="section-head"><span class="step">01</span> Project Setup</h2>
+          <div class="mode-tabs" role="tablist" aria-label="Planning mode">
+            <button class="mode-tab active" id="modeSceneBtn" type="button" onclick="setMode('scene')">By Application Scenario</button>
+            <button class="mode-tab" id="modeChannelBtn" type="button" onclick="setMode('channel')">By Channel Count</button>
+            <button class="mode-tab" id="modeDemandBtn" type="button" onclick="setMode('demand')">Plan from Wall Dimensions</button>
+            <button class="mode-tab" id="modeMediaBtn" type="button" onclick="setMode('media')">Media Resolution</button>
+          </div>
+          <div id="sceneMode">
+            <div class="section-title">Select an Application Scenario</div>
+            <div class="scene-grid">
+              <button class="scene-card" data-scene="wide" type="button" onclick="setScene('wide')"><b>Single Ultra-Wide Screen</b><small>One surface, multiple projectors</small></button>
+              <button class="scene-card" data-scene="l" type="button" onclick="setScene('l')"><b>L-Shaped Two-Wall Setup</b><small>Front Wall + Left Wall</small></button>
+              <button class="scene-card" data-scene="u" type="button" onclick="setScene('u')"><b>U-Shaped Three-Wall Setup</b><small>Front Wall + Left and Right Walls</small></button>
+              <button class="scene-card" data-scene="four" type="button" onclick="setScene('four')"><b>Four-Wall Immersive Space</b><small>Front, Back, Left, and Right Walls</small></button>
+              <button class="scene-card active" data-scene="floor" type="button" onclick="setScene('floor')"><b>Four Walls + Floor</b><small>Five-Surface Immersive Projection</small></button>
+              <button class="scene-card" data-scene="six" type="button" onclick="setScene('six')"><b>Four Walls + Floor + Ceiling</b><small>Six-Surface Immersive Space</small></button>
+              <button class="scene-card" data-scene="custom" type="button" onclick="setScene('custom')"><b>Custom Projection Surfaces</b><small>Set projector counts for each surface manually</small></button>
+            </div>
+            <div class="hint">Scene presets are starting points only. Adjust the projector count for each surface to match the actual installation.</div>
+            <div class="section-title">Projector Count per Surface</div>
+            <div class="surface-grid" id="surfaceGrid"></div>
+          </div>
+          <div id="channelMode" class="hidden">
+            <div class="section-title">Enter Required Output Channels</div>
+            <div class="channel-entry">
+              <label for="channelCount">Total Output Channels (1–32)</label>
+              <div class="counter"><button type="button" aria-label="Decrease channel count" onclick="adjustChannelCount(-1)">−</button><input id="channelCount" type="number" inputmode="numeric" min="1" max="32" step="1" value="5"><button type="button" aria-label="Increase channel count" onclick="adjustChannelCount(1)">＋</button></div>
+              <div class="field-help">Use when the total projector count is known but projectors do not need to be assigned to individual surfaces. Channels are listed as Projector 1, Projector 2, and so on.</div>
+            </div>
+          </div>
+          <div id="demandMode" class="hidden">
+            <div class="section-title">Enter Customer Wall Dimensions</div>
+            <div class="demand-intro">Use when wall dimensions are known and the projector count needs to be estimated. Landscape and portrait orientations are compared. No specific projector model is assumed.</div>
+            <div class="demand-fields">
+              <div class="field"><label for="wallCount">Number of Equal-Sized Walls</label><select id="wallCount" onchange="calculateDemand()"><option value="1">1 wall</option><option value="2">2 walls</option><option value="3" selected>3 walls</option><option value="4">4 walls</option><option value="5">5 walls</option><option value="6">6 walls</option></select></div>
+              <div class="field"><label for="wallWidth">Wall Width (m)</label><input id="wallWidth" type="number" min="0.5" max="100" step="0.01" value="3.95" inputmode="decimal" oninput="calculateDemand()"></div>
+              <div class="field"><label for="wallHeight">Wall Height (m)</label><input id="wallHeight" type="number" min="0.5" max="20" step="0.01" value="3.3" inputmode="decimal" oninput="calculateDemand()"></div>
+              <div class="field"><label for="throwRatio">Throw Ratio (entered by sales)</label><input id="throwRatio" type="number" min="0.1" max="5" step="0.01" placeholder="e.g. 0.8" inputmode="decimal" oninput="calculateDemand()"></div>
+              <div class="field"><label for="overlapPct">Adjacent Image Overlap (%)</label><input id="overlapPct" type="number" min="0" max="40" step="1" value="15" inputmode="numeric" oninput="calculateDemand()"></div>
+              <div class="field"><label for="targetCoverage">Target Wall-Width Coverage</label><select id="targetCoverage" onchange="calculateDemand()"><option value="90" selected>At least 90% (edge margins allowed)</option><option value="95">At least 95%</option><option value="100">Aim for 100% coverage</option></select></div>
+            </div>
+            <div class="hint">If throw ratio is blank, projector count, image dimensions, and cascade topology are still calculated, but throw distance is not shown. Throw distance is estimated as image width × throw ratio and must be verified against the selected projector lens specifications.</div>
+          </div>
+          <div id="mediaMode" class="hidden">
+            <div class="section-title">Video Media Canvas Parameters</div>
+            <div class="demand-intro">For content-production teams. Estimate the effective media canvas for one wall and a linearly unfolded canvas across multiple walls using projector count per wall, per-channel resolution, projection orientation, and edge-blend overlap.</div>
+            <div class="demand-fields">
+              <div class="field"><label for="mediaWallCount">Number of Equal-Sized Walls</label><select id="mediaWallCount" onchange="calculateMedia()"><option value="1">1 wall</option><option value="2">2 walls</option><option value="3" selected>3 walls</option><option value="4">4 walls</option><option value="5">5 walls</option><option value="6">6 walls</option></select></div>
+              <div class="field"><label for="mediaProjectorsPerWall">Projectors per Wall</label><input id="mediaProjectorsPerWall" type="number" min="1" max="16" step="1" value="2" inputmode="numeric" oninput="calculateMedia()"></div>
+              <div class="field"><label for="mediaOrientation">Projection Orientation</label><select id="mediaOrientation" onchange="calculateMedia()"><option value="horizontal">Landscape (1920 px wide)</option><option value="vertical" selected>Portrait (rotated 90°)</option></select></div>
+              <div class="field"><label for="mediaOverlapPct">Adjacent Image Overlap (%)</label><input id="mediaOverlapPct" type="number" min="0" max="40" step="1" value="15" inputmode="numeric" oninput="calculateMedia()"></div>
+            </div>
+            <div class="hint">Overlap is calculated as a percentage of one projector channel’s pixel width along the blending direction. The media resolution is a logical canvas estimate (combined output pixels minus blend overlap), not a guarantee of the media server input resolution.</div>
+          </div>
+          <div class="section-title">Per-Channel Output Resolution</div>
+          <div class="resolution-options">
+            <button class="res-choice" id="res1080" type="button" onclick="setResolution('1080')">1920 × 1080<small>1080P</small></button>
+            <button class="res-choice active" id="res1200" type="button" onclick="setResolution('1200')">1920 × 1200<small>WUXGA</small></button>
+          </div>
+          <div class="hint">Select the resolution for each blending output channel, not the total canvas resolution for the project. The overall canvas also depends on projector layout, blend overlap, and playback-system settings.</div>
+          <div class="actions"><button class="btn btn-primary" type="button" onclick="calculate()">Update Plan</button><button class="btn btn-secondary" type="button" onclick="resetAll()">Reset</button></div>
+        </section>
+        <section class="panel result-panel">
+          <h2 class="section-head"><span class="step">02</span> Planning Results</h2>
+          <div id="legacyResults">
+          <div class="kpis">
+            <div class="kpi"><label>Projectors / Output Channels</label><strong id="totalChannels">5 channels</strong><small>One output channel per projector</small></div>
+            <div class="kpi"><label>Blending Units</label><strong id="unitCount">3 units</strong><small>Up to 2 output channels per unit</small></div>
+            <div class="kpi highlight"><label>Recommended Cascade Topology</label><strong id="topology">2 + 2 + 1</strong><small id="topologyNote">Pair channels first; configure any remaining channel separately</small></div>
+            <div class="kpi"><label>Per-Channel Output Resolution</label><strong id="resolutionValue">1920×1200</strong><small>Each output channel uses the selected resolution</small></div>
+          </div>
+          <div class="result-block" id="roomBlock">
+            <div class="block-title">Application Layout <span class="pill" id="scenePill">Four Walls + Floor</span></div>
+            <div class="room-diagram"><div class="room-inner" id="roomInner"></div></div>
+            <div class="diagram-note">This diagram illustrates projection surfaces and counts only. It does not represent actual projection direction, coverage, or installation dimensions.</div>
+          </div>
+          <div class="result-block">
+            <div class="block-title">Output Channel Assignment <span class="pill" id="channelPill">5 output channels</span></div>
+            <div class="channel-list" id="channelList"></div>
+          </div>
+          <div class="result-block">
+            <div class="block-title">Blending Unit Cascade Layout <span class="pill" id="unitPill">3 units</span></div>
+            <div class="cascade-list" id="cascadeList"></div>
+          </div>
+          <div class="plan-actions"><button class="btn btn-primary" type="button" onclick="copyPlan()">Copy Plan</button><button class="btn btn-secondary" type="button" onclick="downloadPlan()">Download TXT Plan</button><span class="copy-status" id="copyStatus" aria-live="polite"></span></div>
+          <div class="plan-text" id="planText"></div>
+          <details class="engineering">
+            <summary>Engineering Notes: Linear Canvas Estimate</summary>
+            <div class="engineering-body">
+              <div class="fields">
+                <div class="field"><label for="canvasAxis">Projector Arrangement</label><select id="canvasAxis" onchange="updateCanvasEstimate()"><option value="horizontal">Single Horizontal Row</option><option value="vertical">Single Vertical Column</option></select></div>
+                <div class="field"><label for="overlapPx">Adjacent Image Overlap (px)</label><input id="overlapPx" type="number" min="0" max="1919" step="1" value="0" inputmode="numeric" oninput="updateCanvasEstimate()"></div>
+              </div>
+              <div class="canvas-result" id="canvasResult">Not calculated yet</div>
+              <div class="canvas-note">This estimates a linear canvas only when all projectors are arranged in one horizontal row or one vertical column. Do not use it as the final canvas for multi-wall, floor, ceiling, or irregular spaces. Confirm the actual canvas with the blending software, media server, and project mapping.</div>
+            </div>
+          </details>
+          <div class="notice"><b>Planning rule:</b> One or two output channels use one blending unit. Above two channels, group in pairs and assign any remaining channel to the final unit (e.g. 3 = 2+1, 5 = 2+2+1, 6 = 2+2+2). This tool does not specify a product model. Verify actual I/O interfaces, cascade method, synchronization requirements, and source capabilities against the final product specifications and project design.</div>
+          </div>
+          <div id="demandResults" class="hidden">
+            <div class="result-block"><div class="block-title">Customer Requirements Summary <span class="pill">Wall-Dimension Planning</span></div><div class="demand-summary" id="demandSummary"></div></div>
+            <div class="result-block"><div class="block-title">Landscape vs. Portrait Comparison <span class="pill">Theoretical Estimate</span></div><div class="demand-results-grid" id="demandCompare"></div></div>
+            <div class="result-block"><div class="block-title">Recommended Channel Assignment by Wall</div><div class="wall-breakdown" id="demandWallBreakdown"></div></div>
+            <div class="result-block"><div class="block-title">Media Resolution Recommendation <span class="pill">Auto-calculated</span></div><div class="media-pair" id="demandMediaResults"></div><div class="canvas-note">The unfolded canvas assumes equal-sized walls arranged sequentially in a linear layout. It excludes corner geometry compensation and additional cropping. Confirm whether the player and blending software use separate media per wall or one unfolded panoramic canvas.</div><div class="hint"><b>Cascade Media Reminder:</b> Keep frame rate, total frame count, start/end points, and playlist order consistent across devices. Start with 25 fps CFR, MP4/H.264, 8-bit yuv420p, then test synchronization during cold starts, switching, and looping.</div></div>
+            <div class="plan-actions"><button class="btn btn-primary" type="button" onclick="copyPlan()">Copy Plan</button><button class="btn btn-secondary" type="button" onclick="downloadPlan()">Download TXT Plan</button><span class="copy-status" id="demandCopyStatus" aria-live="polite"></span></div>
+            <div class="plan-text" id="demandPlanText"></div>
+            <div class="demand-note"><b>On-Site Verification Reminder:</b> Results are theoretical estimates only. Verify throw ratio and zoom range, installation distance, projector and mount clearance, portrait-mounting and cooling requirements, processor rotation/mapping capabilities, blend overlap, and content aspect ratio. Calculate each wall separately if wall dimensions differ.</div>
+          </div>
+          <div id="mediaResults" class="hidden">
+            <div class="result-block"><div class="block-title">Media Resolution Results <span class="pill">Theoretical Pixel Canvas</span></div><div id="mediaSummary" class="demand-summary"></div></div>
+            <div class="result-block"><div class="media-kpis"><div class="media-kpi"><label>Single-Wall Media Canvas</label><strong id="mediaPerWall">2220 × 1920</strong><small id="mediaPerWallNote">2 portrait projectors, 180 px overlap</small></div><div class="media-kpi highlight"><label>Total Unfolded Canvas</label><strong id="mediaUnfolded">6660 × 1920</strong><small id="mediaUnfoldedNote">3 walls unfolded linearly; no corner compensation</small></div><div class="media-kpi"><label>Unfolded Canvas Aspect Ratio</label><strong id="mediaAspect">3.469:1</strong><small>Reference for media canvas aspect ratio</small></div><div class="media-kpi"><label>Total Canvas Pixel Count</label><strong id="mediaMegapixels">12.79 MP</strong><small>Uncompressed pixel count; not video file size</small></div></div></div>
+            <div class="result-block"><div class="block-title">Media Delivery by Wall <span class="pill" id="mediaWallPill">3 walls</span></div><div class="media-wall-list" id="mediaWallList"></div></div>
+            <div class="hint"><b>Key for Cascade Playback:</b> Use the same frame rate, total frame count, start/end points, and playlist order across devices. Build all clips from a shared timeline. Matching encoding does not guarantee hardware frame synchronization.</div>
+            <details class="engineering">
+              <summary>Cascade Media Guidelines (Brief)</summary>
+              <div class="engineering-body">
+                <ul class="media-rule-list">
+                  <li><b>Shared timeline:</b> Content for left/right projectors or each quadrant should come from the same source timeline, with matching frame rate, total frame count, duration, start/end points, and playlist order. Do not mix 25 fps and 30 fps.</li>
+                  <li><b>Consistent encoding:</b> Prefer MP4/H.264, 25 fps constant frame rate (CFR), progressive scan, and 8-bit yuv420p. Use consistent encoding settings and keyframe positions across clips in the same group.</li>
+                  <li><b>Reduce decoding complexity:</b> If cascade playback stutters, run a comparison test with simpler encoding settings and inspect the actual file properties. Do not judge a file by its name or encoding command alone.</li>
+                  <li><b>Test in stages:</b> Start with continuous playback on one device, then test dual-device cold start, synchronized playback start, file switching, and looping. Record stutter timestamps and anomaly counts.</li>
+                </ul>
+                <div class="media-spec-grid">
+                  <div class="media-spec-card"><h4>1080p Dual-Channel / 2+2 Linear Layout</h4><p>Reference media canvas per player: <b>3840×1080</b>; target bitrate <b>12–14 Mbps</b> for internal storage and <b>10–12 Mbps</b> for USB (test separately); GOP 50 (about 2 seconds), no more than 2 consecutive B-frames.</p></div>
+                  <div class="media-spec-card"><h4>4K 2×2 / 2+2 Cascade</h4><p>Candidate canvas for targeted testing: <b>3840×2160</b>, H.264 Level 5.1, 25 fps CFR; target bitrate about <b>10 Mbps</b>, VBV maxrate 12 Mbps, GOP 50, B-frames 0, reference frames 1. These are staged-test candidates, not universal certification standards.</p></div>
+                </div>
+                <div class="media-rule-foot"><b>Note:</b> Re-test each resolution, device model, firmware version, and USB/internal-storage playback path separately. Matching media settings do not guarantee stutter-free playback, seamless switching, or frame-accurate synchronization. Validate 1920×1200 prototypes separately.</div>
+              </div>
+            </details>
+            <div class="plan-actions"><button class="btn btn-primary" type="button" onclick="copyPlan()">Copy Media Parameters</button><button class="btn btn-secondary" type="button" onclick="downloadPlan()">Download TXT Notes</button><span class="copy-status" id="mediaCopyStatus" aria-live="polite"></span></div>
+            <div class="plan-text" id="mediaPlanText"></div>
+            <div class="media-note"><b>Important:</b> This is an estimated effective media canvas. Confirm the media server input resolution, codec, frame rate, color format, corner mapping, and blend regions with the blending software, player, and content-production workflow. Do not assume the unfolded canvas is the player output resolution without verification.</div>
+          </div>
+        </section>
+      </div>
+      <div class="footer">Sipa Engineering Planning Tool for Blending Systems · Powered by Sipa · V3.2</div>
+    </main>
+  </div>
+<script>
+  const SURFACES = [
+    {key:'front',name:'Front Wall / Single Screen',short:'Front Wall',desc:'Front projection surface'},
+    {key:'right',name:'Right Wall',short:'Right Wall',desc:'Right projection surface'},
+    {key:'back',name:'Back Wall',short:'Back Wall',desc:'Back projection surface'},
+    {key:'left',name:'Left Wall',short:'Left Wall',desc:'Left projection surface'},
+    {key:'floor',name:'Floor',short:'Floor',desc:'Floor projection surface'},
+    {key:'ceiling',name:'Ceiling',short:'Ceiling',desc:'Ceiling projection surface'}
+  ];
+  const SCENES = {
+    wide:{name:'Single Ultra-Wide Screen',counts:{front:2,right:0,back:0,left:0,floor:0,ceiling:0}},
+    l:{name:'L-Shaped Two-Wall Setup',counts:{front:1,right:0,back:0,left:1,floor:0,ceiling:0}},
+    u:{name:'U-Shaped Three-Wall Setup',counts:{front:1,right:1,back:0,left:1,floor:0,ceiling:0}},
+    four:{name:'Four-Wall Immersive Space',counts:{front:1,right:1,back:1,left:1,floor:0,ceiling:0}},
+    floor:{name:'Four Walls + Floor',counts:{front:1,right:1,back:1,left:1,floor:1,ceiling:0}},
+    six:{name:'Four Walls + Floor + Ceiling',counts:{front:1,right:1,back:1,left:1,floor:1,ceiling:1}},
+    custom:{name:'Custom Projection Surfaces',counts:{front:0,right:0,back:0,left:0,floor:0,ceiling:0}}
+  };
+  const DEFAULT_COUNTS = {...SCENES.floor.counts};
+  let currentMode='scene';
+  let currentScene='floor';
+  let currentResolution='1200';
+  let surfaceCounts={...DEFAULT_COUNTS};
+  let channelCount=5;
+  let lastPlan='';
+
+  function setMode(mode){
+    currentMode=mode;
+    document.getElementById('sceneMode').classList.toggle('hidden',mode!=='scene');
+    document.getElementById('channelMode').classList.toggle('hidden',mode!=='channel');
+    document.getElementById('demandMode').classList.toggle('hidden',mode!=='demand');
+    document.getElementById('mediaMode').classList.toggle('hidden',mode!=='media');
+    document.getElementById('modeSceneBtn').classList.toggle('active',mode==='scene');
+    document.getElementById('modeChannelBtn').classList.toggle('active',mode==='channel');
+    document.getElementById('modeDemandBtn').classList.toggle('active',mode==='demand');
+    document.getElementById('modeMediaBtn').classList.toggle('active',mode==='media');
+    document.getElementById('legacyResults').classList.toggle('hidden',mode==='demand'||mode==='media');
+    document.getElementById('demandResults').classList.toggle('hidden',mode!=='demand');
+    document.getElementById('mediaResults').classList.toggle('hidden',mode!=='media');
+    if(mode==='channel') channelCount=Math.max(1,Math.min(32,getSurfaceTotal()||channelCount||1));
+    document.getElementById('channelCount').value=channelCount;
+    if(mode==='demand') calculateDemand(); else if(mode==='media') calculateMedia(); else calculate();
+  }
+  function setScene(scene){
+    currentScene=scene;
+    surfaceCounts={...SCENES[scene].counts};
+    document.querySelectorAll('[data-scene]').forEach(el=>el.classList.toggle('active',el.dataset.scene===scene));
+    renderSurfaceControls();
+    calculate();
+  }
+  function setResolution(value){
+    currentResolution=value;
+    document.getElementById('res1080').classList.toggle('active',value==='1080');
+    document.getElementById('res1200').classList.toggle('active',value==='1200');
+    calculate();
+  }
+  function adjustSurface(key,delta){
+    surfaceCounts[key]=Math.max(0,Math.min(32,(surfaceCounts[key]||0)+delta));
+    if(currentScene!=='custom' && surfaceCounts[key]!==SCENES[currentScene].counts[key]) currentScene='custom';
+    document.querySelectorAll('[data-scene]').forEach(el=>el.classList.toggle('active',el.dataset.scene===currentScene));
+    renderSurfaceControls();
+    calculate();
+  }
+  function adjustChannelCount(delta){
+    channelCount=Math.max(1,Math.min(32,(parseInt(document.getElementById('channelCount').value,10)||1)+delta));
+    document.getElementById('channelCount').value=channelCount;
+    calculate();
+  }
+  function renderSurfaceControls(){
+    const root=document.getElementById('surfaceGrid');
+    root.innerHTML=SURFACES.map(s=>{
+      const count=surfaceCounts[s.key]||0;
+      return `<div class="surface-card ${count>0?'active':''}"><div class="surface-head"><b>${s.name}</b><span class="surface-state">${count>0?'Active':'Inactive'}</span></div><div class="counter"><button type="button" aria-label="Decrease ${s.name} projectors" ${count<=0?'disabled':''} onclick="adjustSurface('${s.key}',-1)">−</button><output aria-label="${s.name} projector count">${count}</output><button type="button" aria-label="Increase ${s.name} projectors" ${count>=32?'disabled':''} onclick="adjustSurface('${s.key}',1)">＋</button></div></div>`;
+    }).join('');
+  }
+  function getSurfaceTotal(){return SURFACES.reduce((sum,s)=>sum+(surfaceCounts[s.key]||0),0)}
+  function getResolution(){return currentResolution==='1080'?{w:1920,h:1080,label:'1920×1080'}:{w:1920,h:1200,label:'1920×1200'}}
+  function getChannels(){
+    const list=[];
+    if(currentMode==='channel'){
+      const count=Math.max(1,Math.min(32,parseInt(document.getElementById('channelCount').value,10)||channelCount||1));
+      for(let i=1;i<=count;i++) list.push({num:i,surface:`Projector ${i}`,surfaceKey:'custom',projector:i});
+      return list;
+    }
+    let n=0;
+    SURFACES.forEach(s=>{
+      const count=surfaceCounts[s.key]||0;
+      for(let i=1;i<=count;i++){
+        n++;
+        list.push({num:n,surface:count>1?`${s.short} · Projector ${i}`:`${s.short} Projector`,surfaceKey:s.key,projector:i});
+      }
+    });
+    return list;
+  }
+  function getGroups(channels){
+    const groups=[];
+    for(let i=0;i<channels.length;i+=2) groups.push(channels.slice(i,i+2));
+    return groups;
+  }
+  function renderRoomDiagram(){
+    const root=document.getElementById('roomInner');
+    const count=(key)=>surfaceCounts[key]||0;
+    const single=currentMode==='scene' && currentScene==='wide';
+    const wall=(key,cls,label)=>{
+      const c=count(key); const active=c>0 && currentMode==='scene';
+      return `<div class="wall ${cls} ${active?'active':''}"><span>${single && key==='front'?'Single Screen / Front Wall':label}</span><b>${active?c+' projectors':'—'}</b></div>`;
+    };
+    if(currentMode==='channel'){
+      root.innerHTML='<div class="room-center" style="inset:8% 5%;font-size:12px"><b>Custom Channel Configuration</b><br>Output assignment generated from total channel count<br>No specific projection surface assigned</div>';
+      return;
+    }
+    root.innerHTML=wall('back','back','Back Wall')+wall('left','left','Left Wall')+wall('right','right','Right Wall')+wall('front','front','Front Wall')+
+      `<div class="room-center"><b>${SCENES[currentScene].name}</b><br>Projection surface diagram<br>Not an installation drawing</div>`+
+      `<div class="floor-tag ${count('floor')>0?'active':''}">Floor: ${count('floor')>0?count('floor')+' projectors':'Inactive'}</div>`+
+      `<div class="ceiling-tag ${count('ceiling')>0?'active':''}">Ceiling: ${count('ceiling')>0?count('ceiling')+' projectors':'Inactive'}</div>`;
+  }
+  function buildPlan(channels,groups,total){
+    const res=getResolution();
+    const scene=currentMode==='scene'?SCENES[currentScene].name:'Custom by Channel Count';
+    const topology=groups.map(g=>g.length).join('+')||'—';
+    const map=channels.map(c=>`CH${c.num} → ${c.surface}`).join('\n');
+    return `Sipa Fusion Cascade Plan\nApplication scenario: ${scene}\nProjector count: ${total}\nBlending output channels: ${total}\nPer-channel output resolution: ${res.label}\nRecommended cascade topology: ${topology}\nBlending unit count: ${groups.length} (no specific model specified)\n\nChannel assignment:\n${map||'No output channels configured yet'}\n\nPlanning notes: Each projector corresponds to one output channel. One or two channels use one blending unit; above two channels, group in pairs and assign any remaining channel to the final unit. Confirm total canvas resolution separately based on layout, overlap pixels, blending software, and playback system. Actual interfaces and cascade capabilities depend on final product specifications and project design.`;
+  }
+  function calculate(){
+    if(currentMode==='demand'){calculateDemand();return;}
+    if(currentMode==='media'){calculateMedia();return;}
+    if(currentMode==='channel'){
+      const raw=parseInt(document.getElementById('channelCount').value,10);
+      if(!Number.isFinite(raw)){channelCount=1;document.getElementById('channelCount').value=1;}
+      else {channelCount=Math.max(1,Math.min(32,raw));document.getElementById('channelCount').value=channelCount;}
+    }
+    const channels=getChannels();
+    const total=channels.length;
+    const groups=getGroups(channels);
+    const topology=groups.map(g=>g.length).join(' + ')||'Not configured';
+    const res=getResolution();
+    document.getElementById('totalChannels').textContent=total+' channels';
+    document.getElementById('unitCount').textContent=groups.length+' units';
+    document.getElementById('topology').textContent=topology;
+    document.getElementById('topologyNote').textContent=total>2?'Pair channels first; configure any remaining channel separately':total===2?'2 output channels handled by 1 blending unit':total===1?'1 output channel handled by 1 blending unit':'Configure at least 1 output channel';
+    document.getElementById('resolutionValue').textContent=res.label;
+    document.getElementById('channelPill').textContent=total+' output channels';
+    document.getElementById('unitPill').textContent=groups.length+' units';
+    document.getElementById('scenePill').textContent=currentMode==='scene'?SCENES[currentScene].name:'Custom Channel Count';
+    document.getElementById('roomBlock').classList.toggle('hidden',false);
+    renderRoomDiagram();
+    const channelList=document.getElementById('channelList');
+    const cascadeList=document.getElementById('cascadeList');
+    if(total===0){
+      channelList.innerHTML='<div class="empty-state" style="grid-column:1/-1">No projection surfaces are active. Set the projector count for at least one surface to 1 or more to generate a plan.</div>';
+      cascadeList.innerHTML='<div class="empty-state">No cascade structure yet</div>';
+    } else {
+      channelList.innerHTML=channels.map(c=>`<div class="channel-item"><span class="ch-badge">CH${c.num}</span><div class="channel-copy"><b>${c.surface}</b><small>Output ${res.label}</small></div></div>`).join('');
+      cascadeList.innerHTML=groups.map((g,i)=>`<div class="cascade-unit"><div class="cascade-head"><b>Blending Unit ${String.fromCharCode(65+i)}</b><span>${g.length} output channels</span></div><div class="cascade-outputs">${g.map(c=>`<div class="cascade-output"><strong>CH${c.num} · ${res.label}</strong><span>→ ${c.surface}</span></div>`).join('')}</div></div>`).join('');
+    }
+    lastPlan=buildPlan(channels,groups,total);
+    document.getElementById('planText').textContent=lastPlan;
+    updateCanvasEstimate();
+  }
+  function formatMeters(value){
+    if(!Number.isFinite(value)) return '—';
+    return value.toFixed(2).replace(/\.00$/,'');
+  }
+  function getCascadeForTotal(total){
+    const parts=[];let remain=Math.max(0,total);
+    while(remain>=2){parts.push(2);remain-=2;}
+    if(remain===1) parts.push(1);
+    return parts.join(' + ')||'—';
+  }
+  function calculateOrientationPlan(orientation,wallWidth,wallHeight,wallCount,res,overlapPct,targetCoverage,throwRatio){
+    const aspect=orientation==='horizontal'?res.w/res.h:res.h/res.w;
+    const fullHeightWidth=wallHeight*aspect;
+    const overlap=fullHeightWidth*overlapPct/100;
+    let perWall=1, imageWidth=0, imageHeight=0, overlapUsed=0, coveredWidth=0;
+    if(fullHeightWidth>=wallWidth){
+      // Single projector is scaled to fit within the wall; it does not overrun the wall edges.
+      imageWidth=wallWidth;
+      imageHeight=imageWidth/aspect;
+      overlapUsed=0;
+      coveredWidth=imageWidth;
+    }else{
+      const targetWidth=wallWidth*targetCoverage/100;
+      const stride=Math.max(0.0001,fullHeightWidth-overlap);
+      perWall=Math.max(1,Math.ceil((targetWidth-overlap)/stride));
+      perWall=Math.min(32,perWall);
+      imageWidth=fullHeightWidth;
+      imageHeight=wallHeight;
+      overlapUsed=overlap;
+      coveredWidth=perWall*imageWidth-(perWall-1)*overlapUsed;
+      // If the chosen count would exceed the wall width, scale all images down proportionally
+      // while preserving their aspect ratio and the configured overlap percentage.
+      if(coveredWidth>wallWidth){
+        const overlapFraction=overlapPct/100;
+        imageWidth=wallWidth/(perWall-(perWall-1)*overlapFraction);
+        imageHeight=imageWidth/aspect;
+        overlapUsed=imageWidth*overlapFraction;
+        coveredWidth=wallWidth;
+      }
+    }
+    const total=perWall*wallCount;
+    const units=Math.ceil(total/2);
+    const coveragePct=Math.min(100,coveredWidth/wallWidth*100);
+    const sideMargin=Math.max(0,(wallWidth-coveredWidth)/2);
+    const overfill=Math.max(0,coveredWidth-wallWidth);
+    const distance=Number.isFinite(throwRatio)&&throwRatio>0?imageWidth*throwRatio:null;
+    return {orientation,aspect,perWall,total,units,topology:getCascadeForTotal(total),imageWidth,imageHeight,overlap:overlapUsed,coveredWidth,coveragePct,sideMargin,overfill,centerSpacing:perWall>1?imageWidth-overlapUsed:null,distance,wallWidth,wallHeight,wallCount};
+  }
+  function renderOrientationCard(plan,recommended){
+    const title=plan.orientation==='horizontal'?'Landscape (horizontal image)':'Portrait (image rotated 90°)';
+    const verticalCoverage=plan.imageHeight/plan.wallHeight*100;
+    const distanceText=plan.distance===null?'Throw ratio not entered':`${formatMeters(plan.distance)} m`;
+    const widthCoverage=plan.coveragePct.toFixed(1)+'%';
+    const imageSize=`${formatMeters(plan.imageWidth)} × ${formatMeters(plan.imageHeight)} m`;
+    const spacingText=plan.centerSpacing===null?'Single projector; no center spacing':`${formatMeters(plan.centerSpacing)} m`;
+    const fitNote=plan.overfill>0.01?`Estimated coverage exceeds wall width by ${formatMeters(plan.overfill)} m; cropping or scaling is required.`:plan.sideMargin>0.01?`Estimated side margin: ${formatMeters(plan.sideMargin)} m on each side.`:'Horizontal coverage is constrained by wall width.';
+    return `<article class="orientation-card ${recommended?'recommended':''}">
+      <div class="orientation-head"><b>${title}</b><small>${recommended?'Preferred as the lower-projector-count baseline':'For comparing coverage and projector count'} · ${plan.wallCount} walls</small></div>
+      <div class="orientation-body">
+        <div class="orientation-main">${plan.total} projectors</div>
+        <div class="orientation-sub">${plan.perWall} per wall · ${plan.total} output channels · Cascade ${plan.topology} · ${plan.units} blending units</div>
+        <div class="orientation-stats">
+          <div class="mini-stat"><span>Image width × height per projector</span><b>${imageSize}</b></div>
+          <div class="mini-stat"><span>Wall-width coverage</span><b>${widthCoverage}</b></div>
+          <div class="mini-stat"><span>Image-height coverage</span><b>${Math.min(100,verticalCoverage).toFixed(1)}%</b></div>
+          <div class="mini-stat"><span>Estimated lens distance</span><b>${distanceText}</b></div>
+          <div class="mini-stat"><span>Blend overlap per seam</span><b>${plan.perWall>1?formatMeters(plan.overlap)+' m':'Not required'}</b></div>
+          <div class="mini-stat"><span>Center-to-center spacing</span><b>${spacingText}</b></div>
+        </div>
+        <div class="field-help">${fitNote}</div>
+      </div>
+    </article>`;
+  }
+  function gcd(a,b){while(b){const t=b;b=a%b;a=t;}return a||1;}
+  function calculateMediaCanvas(wallCount,projectorsPerWall,orientation,res,overlapPct){
+    const channelW=orientation==='horizontal'?res.w:res.h;
+    const channelH=orientation==='horizontal'?res.h:res.w;
+    const overlapPx=projectorsPerWall>1?Math.round(channelW*overlapPct/100):0;
+    const perWallW=projectorsPerWall*channelW-(projectorsPerWall-1)*overlapPx;
+    const perWallH=channelH;
+    const unfoldedW=perWallW*wallCount;
+    const unfoldedH=perWallH;
+    const divisor=gcd(unfoldedW,unfoldedH);
+    return {wallCount,projectorsPerWall,orientation,res,overlapPct,channelW,channelH,overlapPx,perWallW,perWallH,unfoldedW,unfoldedH,ratioW:unfoldedW/divisor,ratioH:unfoldedH/divisor,megapixels:unfoldedW*unfoldedH/1000000};
+  }
+  function renderDemandMediaCard(plan,wallCount,res,overlapPct){
+    const media=calculateMediaCanvas(wallCount,plan.perWall,plan.orientation,res,overlapPct);
+    const label=plan.orientation==='horizontal'?'Landscape Plan':'Portrait Plan';
+    const overlapText=media.projectorsPerWall>1?`Approx. overlap per seam: ${media.overlapPx} px`:'One projector per wall; no blend overlap';
+    return `<article class="media-option"><div class="media-option-head">${label} · ${plan.perWall} projectors per wall</div><div class="media-option-body"><span class="field-help">Effective canvas per wall</span><strong>${media.perWallW} × ${media.perWallH}</strong><p>Unfolded canvas across walls: ${media.unfoldedW} × ${media.unfoldedH} px</p><p>${overlapText}; unfolded canvas aspect ratio approx. ${(media.unfoldedW/media.unfoldedH).toFixed(3)}:1</p></div></article>`;
+  }
+  function cascadeMediaGuidanceText(){
+    return `Cascade Media Production Recommendations (Brief)
+1. Shared timeline: Content for left/right projectors or each quadrant should use the same source timeline. Keep frame rate, total frames, duration, start/end points, and playlist order identical; do not mix 25 fps and 30 fps.
+2. General encoding: Prefer MP4/H.264, 25 fps constant frame rate (CFR), progressive scan, and 8-bit yuv420p. Keep encoding settings and keyframe positions consistent within each group.
+3. 1080p dual-channel / linear 2+2 reference: Single-player canvas 3840×1080; target 12–14 Mbps for internal storage and 10–12 Mbps for USB (test separately); GOP 50 (about 2 seconds), no more than 2 consecutive B-frames.
+4. 4K 2×2 / 2+2 cascade candidate for staged testing: 3840×2160, H.264 Level 5.1, 25 fps CFR, target bitrate about 10 Mbps, VBV maxrate 12 Mbps, GOP 50, B-frames 0, reference frames 1. Inspect the actual file and retest on the device; these are not universal certification standards.
+5. Acceptance sequence: Start with continuous playback on one device, then test dual-device cold starts, synchronized playback start, file switching, and looping. Record stutter timestamps and anomaly counts.
+Limitations: Consistent encoding does not guarantee hardware frame synchronization and cannot guarantee zero stutter, seamless switching, or frame-accurate synchronization. Test 1920×1200 prototypes, different models/firmware, and USB/internal-storage paths separately.`;
+  }
+  function calculateMedia(){
+    if(currentMode!=='media') return;
+    const wallCount=Math.max(1,Math.min(6,parseInt(document.getElementById('mediaWallCount').value,10)||3));
+    const projectorsPerWall=Math.max(1,Math.min(16,parseInt(document.getElementById('mediaProjectorsPerWall').value,10)||1));
+    document.getElementById('mediaWallCount').value=wallCount;
+    document.getElementById('mediaProjectorsPerWall').value=projectorsPerWall;
+    const orientation=document.getElementById('mediaOrientation').value==='vertical'?'vertical':'horizontal';
+    const overlapPct=Math.max(0,Math.min(40,parseFloat(document.getElementById('mediaOverlapPct').value)||0));
+    document.getElementById('mediaOverlapPct').value=overlapPct;
+    const res=getResolution();
+    const m=calculateMediaCanvas(wallCount,projectorsPerWall,orientation,res,overlapPct);
+    const orientationLabel=orientation==='horizontal'?'Landscape':'Portrait (rotated 90°)';
+    document.getElementById('mediaSummary').textContent=`${wallCount} equal-sized walls, ${projectorsPerWall} projectors per wall, ${orientationLabel}; native per-channel output: ${orientation==='horizontal'?res.label:`${res.h}×${res.w}`}. Blend overlap: ${overlapPct}%; estimated overlap per seam: ${m.overlapPx} px. This is a logical media canvas estimate, not a guarantee of media-server input timing.`;
+    document.getElementById('mediaPerWall').textContent=`${m.perWallW} × ${m.perWallH}`;
+    document.getElementById('mediaPerWallNote').textContent=`${projectorsPerWall} projectors per wall; ${m.overlapPx?`overlap ${m.overlapPx} px`:'no blend overlap'}`;
+    document.getElementById('mediaUnfolded').textContent=`${m.unfoldedW} × ${m.unfoldedH}`;
+    document.getElementById('mediaUnfoldedNote').textContent=`${wallCount} walls unfolded linearly; no corner compensation`;
+    document.getElementById('mediaAspect').textContent=`${(m.unfoldedW/m.unfoldedH).toFixed(3)}:1`;
+    document.getElementById('mediaMegapixels').textContent=`${m.megapixels.toFixed(2)} MP`;
+    document.getElementById('mediaWallPill').textContent=`${wallCount} walls`;
+    document.getElementById('mediaWallList').innerHTML=Array.from({length:wallCount},(_,i)=>`<div class="media-wall"><b>Wall ${i+1}</b>${m.perWallW} × ${m.perWallH} px<br>${projectorsPerWall} projectors · ${orientationLabel}</div>`).join('');
+    lastPlan=`Sipa Media Resolution — Theoretical Estimate
+Wall count: ${wallCount} (assuming equal dimensions)
+Projectors per wall: ${projectorsPerWall}
+Projection orientation: ${orientationLabel}
+Native per-channel output: ${orientation==='horizontal'?res.label:`${res.h}×${res.w}`}
+Blend overlap: ${overlapPct}%
+Estimated overlap per seam: ${m.overlapPx} px
+
+Single-wall logical media canvas: ${m.perWallW} × ${m.perWallH} px
+Linear unfolded canvas across walls: ${m.unfoldedW} × ${m.unfoldedH} px
+Unfolded canvas aspect ratio: ${(m.unfoldedW/m.unfoldedH).toFixed(3)}:1
+Total pixel count: ${m.megapixels.toFixed(2)} MP
+
+Delivery recommendations by wall:
+${Array.from({length:wallCount},(_,i)=>`Wall ${i+1}: ${m.perWallW} × ${m.perWallH} px (if delivering each wall separately)`).join('\n')}
+
+Calculation assumptions: Each projector uses the selected native resolution. In portrait orientation, width and height are swapped after a 90° rotation. Overlap pixels are calculated from per-channel width along the blending direction × overlap rate. All walls are assumed to have equal dimensions and projector counts. The unfolded multi-wall canvas is a linear estimate and excludes corner geometry compensation, extra cropping, and wall-specific aspect-ratio corrections.
+
+Before delivery, confirm the blending software’s logical canvas definition, media-server input resolution and output mapping, corner content handling, video codec/frame rate/color format, and audio/video synchronization. This estimate cannot replace the media server’s actual output timing.
+
+${cascadeMediaGuidanceText()}`;
+    document.getElementById('mediaPlanText').textContent=lastPlan;
+  }
+  function calculateDemand(){
+    if(currentMode!=='demand') return;
+    const wallCount=Math.max(1,Math.min(6,parseInt(document.getElementById('wallCount').value,10)||3));
+    const wallWidth=parseFloat(document.getElementById('wallWidth').value);
+    const wallHeight=parseFloat(document.getElementById('wallHeight').value);
+    const overlapPct=Math.max(0,Math.min(40,parseFloat(document.getElementById('overlapPct').value)||0));
+    const targetCoverage=Math.max(90,Math.min(100,parseInt(document.getElementById('targetCoverage').value,10)||90));
+    const ratioRaw=document.getElementById('throwRatio').value.trim();
+    const throwRatio=ratioRaw===''?null:parseFloat(ratioRaw);
+    if(!Number.isFinite(wallWidth)||wallWidth<0.5||wallWidth>100||!Number.isFinite(wallHeight)||wallHeight<0.5||wallHeight>20){
+      document.getElementById('demandSummary').textContent='Enter valid wall dimensions: width 0.5–100 m and height 0.5–20 m.';
+      document.getElementById('demandCompare').innerHTML='';document.getElementById('demandWallBreakdown').innerHTML='';document.getElementById('demandMediaResults').innerHTML='';
+      lastPlan='Enter valid wall dimensions before generating a plan.';document.getElementById('demandPlanText').textContent=lastPlan;return;
+    }
+    const res=getResolution();
+    const landscape=calculateOrientationPlan('horizontal',wallWidth,wallHeight,wallCount,res,overlapPct,targetCoverage,throwRatio);
+    const portrait=calculateOrientationPlan('vertical',wallWidth,wallHeight,wallCount,res,overlapPct,targetCoverage,throwRatio);
+    // Prefer fewer projectors as the initial budget baseline; present the higher-coverage alternative alongside it.
+    const preferred=landscape.total<=portrait.total?landscape:portrait;
+    const targetText=`${targetCoverage}%`;
+    document.getElementById('demandSummary').innerHTML=`${wallCount} equal-sized walls; each wall: ${formatMeters(wallWidth)} m (W) × ${formatMeters(wallHeight)} m (H). Per-channel output: ${res.label}; blend overlap: ${overlapPct}%; target wall-width coverage: ${targetText}. ${throwRatio===null||!Number.isFinite(throwRatio)||throwRatio<=0?'Throw ratio not entered, so lens distance is not calculated yet.':`Entered throw ratio: ${throwRatio.toFixed(2)}:1; distance is estimated as image width × throw ratio.`}${Math.max(landscape.total,portrait.total)>32?' Note: one option exceeds 32 output channels, outside the calculator’s standard input range. Perform a separate engineering review.':''}`;
+    document.getElementById('demandCompare').innerHTML=renderOrientationCard(landscape,preferred===landscape)+renderOrientationCard(portrait,preferred===portrait);
+    document.getElementById('demandMediaResults').innerHTML=renderDemandMediaCard(landscape,wallCount,res,overlapPct)+renderDemandMediaCard(portrait,wallCount,res,overlapPct);
+    const rows=[];
+    for(let wall=1;wall<=wallCount;wall++){
+      const first=(wall-1)*preferred.perWall+1,last=wall*preferred.perWall;
+      const channelLabel=first===last?`CH${first}`:`CH${first}–CH${last}`;
+      rows.push(`<div class="wall-row"><span>Wall ${wall} · ${preferred.orientation==='horizontal'?'Landscape':'Portrait'} · ${preferred.perWall} projectors</span><b>${channelLabel}</b></div>`);
+    }
+    document.getElementById('demandWallBreakdown').innerHTML=rows.join('');
+    const ratioLine=throwRatio===null||!Number.isFinite(throwRatio)||throwRatio<=0?'Throw ratio not entered. Enter the actual projector throw ratio to calculate distance.':`Throw ratio: ${throwRatio.toFixed(2)}:1. Estimated lens distance for ${preferred.orientation==='horizontal'?'landscape':'portrait'} orientation: approx. ${formatMeters(preferred.distance)} m.`;
+    const landscapeLine=`Landscape: ${landscape.perWall} projectors per wall, ${landscape.total} total; image approx. ${formatMeters(landscape.imageWidth)} × ${formatMeters(landscape.imageHeight)} m; cascade ${landscape.topology}; ${landscape.units} blending units; wall-width coverage ${landscape.coveragePct.toFixed(1)}%.`;
+    const portraitLine=`Portrait: ${portrait.perWall} projectors per wall, ${portrait.total} total; image approx. ${formatMeters(portrait.imageWidth)} × ${formatMeters(portrait.imageHeight)} m; cascade ${portrait.topology}; ${portrait.units} blending units; wall-width coverage ${portrait.coveragePct.toFixed(1)}%.`;
+    const preferredLine=`Preliminary budget baseline with fewer devices: ${preferred.orientation==='horizontal'?'landscape':'portrait'}, ${preferred.total} projectors, cascade ${preferred.topology}, and ${preferred.units} blending units. This baseline is selected only by device count; it does not imply better final image quality or installation suitability.`;
+    lastPlan=`Sipa Blending Processor and Projector Planning Estimate (Wall-Dimension Planning)\nWall count: ${wallCount} (equal-sized walls)\nWall dimensions: ${formatMeters(wallWidth)} m × ${formatMeters(wallHeight)} m\nPer-channel output resolution: ${res.label}\nBlend overlap: ${overlapPct}%\nTarget wall-width coverage: ${targetCoverage}%\n\n${landscapeLine}\n${portraitLine}\n\n${preferredLine}\n${ratioLine}\n\nChannel assignment (preliminary budget baseline):\n${rows.map((_,i)=>{const first=i*preferred.perWall+1,last=(i+1)*preferred.perWall;return `Wall ${i+1}: ${first===last?'CH'+first:'CH'+first+'–CH'+last} (${preferred.perWall} projectors)`;}).join('\n')}\n\nCalculation assumptions: Equal-sized walls use the same projector count. Image aspect ratio follows the selected per-channel resolution in landscape orientation or after a 90° rotation in portrait orientation. Each image is sized to wall height first, then scaled to wall width if it exceeds the wall. Blend overlap is estimated as a percentage of one image width.\nOn-site checks: throw ratio and zoom range, projector/mount clearance, portrait mounting and cooling, blending/mapping and rotation capabilities, content aspect ratio, edge cropping, and site obstructions. This is a theoretical estimate, not an installation drawing.`;
+    const mediaLandscape=calculateMediaCanvas(wallCount,landscape.perWall,'horizontal',res,overlapPct);
+    const mediaPortrait=calculateMediaCanvas(wallCount,portrait.perWall,'vertical',res,overlapPct);
+    lastPlan+=`\n\nMedia resolution estimate:\nLandscape plan: ${landscape.perWall} projectors per wall; single-wall logical canvas ${mediaLandscape.perWallW}×${mediaLandscape.perWallH} px; ${wallCount}-wall linear canvas ${mediaLandscape.unfoldedW}×${mediaLandscape.unfoldedH} px.\nPortrait plan: ${portrait.perWall} projectors per wall; single-wall logical canvas ${mediaPortrait.perWallW}×${mediaPortrait.perWallH} px; ${wallCount}-wall linear canvas ${mediaPortrait.unfoldedW}×${mediaPortrait.unfoldedH} px.\nNote: the unfolded multi-wall canvas excludes corner geometry compensation. Confirm the actual media canvas with the media server, blending software, and content-mapping workflow.
+
+${cascadeMediaGuidanceText()}`;
+    document.getElementById('demandPlanText').textContent=lastPlan;
+  }
+
+  function updateCanvasEstimate(){
+    const channels=getChannels().length;
+    const res=getResolution();
+    const axis=document.getElementById('canvasAxis').value;
+    const overlapEl=document.getElementById('overlapPx');
+    const maxOverlap=(axis==='horizontal'?res.w:res.h)-1;
+    overlapEl.max=maxOverlap;
+    let overlap=parseInt(overlapEl.value,10);
+    if(!Number.isFinite(overlap)||overlap<0) overlap=0;
+    overlap=Math.min(maxOverlap,overlap);
+    overlapEl.value=overlap;
+    if(channels<1){document.getElementById('canvasResult').textContent='Configure at least one output channel first.';return;}
+    let w=res.w,h=res.h;
+    if(axis==='horizontal') w=channels*res.w-(channels-1)*overlap;
+    else h=channels*res.h-(channels-1)*overlap;
+    document.getElementById('canvasResult').textContent=`Estimated canvas: ${w} × ${h} px (${channels} channels, ${overlap} px overlap)`;
+  }
+  async function copyPlan(){
+    const status=document.getElementById(currentMode==='demand'?'demandCopyStatus':currentMode==='media'?'mediaCopyStatus':'copyStatus');
+    try{
+      if(navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(lastPlan);
+      else {
+        const ta=document.createElement('textarea');ta.value=lastPlan;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok) throw new Error('copy failed');
+      }
+      status.textContent='Copied. Ready to paste and send.';
+    }catch(e){status.textContent='Copy failed. Select and copy the plan text below manually.';}
+  }
+  function downloadPlan(){
+    const blob=new Blob(['\ufeff'+lastPlan],{type:'text/plain;charset=utf-8'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=currentMode==='media'?'Sipa_Media_Resolution_Recommendation.txt':currentMode==='demand'?'Sipa_Wall_Dimension_Planning.txt':'Sipa_Blending_Processor_Planning.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    document.getElementById(currentMode==='demand'?'demandCopyStatus':currentMode==='media'?'mediaCopyStatus':'copyStatus').textContent='TXT plan generated';
+  }
+  function resetAll(){
+    currentMode='scene';currentScene='floor';currentResolution='1200';surfaceCounts={...DEFAULT_COUNTS};channelCount=5;
+    document.getElementById('channelCount').value=5;
+    document.getElementById('canvasAxis').value='horizontal';document.getElementById('overlapPx').value=0;
+    document.getElementById('copyStatus').textContent='';
+    document.getElementById('sceneMode').classList.remove('hidden');document.getElementById('channelMode').classList.add('hidden');document.getElementById('demandMode').classList.add('hidden');document.getElementById('mediaMode').classList.add('hidden');
+    document.getElementById('legacyResults').classList.remove('hidden');document.getElementById('demandResults').classList.add('hidden');document.getElementById('mediaResults').classList.add('hidden');
+    document.getElementById('modeSceneBtn').classList.add('active');document.getElementById('modeChannelBtn').classList.remove('active');document.getElementById('modeDemandBtn').classList.remove('active');document.getElementById('modeMediaBtn').classList.remove('active');
+    document.getElementById('wallCount').value='3';document.getElementById('wallWidth').value='3.95';document.getElementById('wallHeight').value='3.3';document.getElementById('throwRatio').value='';document.getElementById('overlapPct').value='15';document.getElementById('targetCoverage').value='90';document.getElementById('demandCopyStatus').textContent='';document.getElementById('mediaWallCount').value='3';document.getElementById('mediaProjectorsPerWall').value='2';document.getElementById('mediaOrientation').value='vertical';document.getElementById('mediaOverlapPct').value='15';document.getElementById('mediaCopyStatus').textContent='';
+    document.querySelectorAll('[data-scene]').forEach(el=>el.classList.toggle('active',el.dataset.scene===currentScene));
+    document.getElementById('res1080').classList.remove('active');document.getElementById('res1200').classList.add('active');
+    renderSurfaceControls();calculate();
+  }
+  document.getElementById('channelCount').addEventListener('input',calculate);
+  if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+  window.addEventListener('load',()=>{renderSurfaceControls();calculate();});
+</script>
+</body>
+</html>
